@@ -66,9 +66,6 @@ export default function LoginPage() {
 
     </div>
       
-      
-
-      <p style={{fontSize:"1.5em"}}>or email</p>
 
       <input
         type="email"
