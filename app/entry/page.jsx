@@ -9,7 +9,7 @@ export default function entry() {
     <div className="container">
       <h1>Ready to Continue?</h1>
 
-      <div style={{display:'flex', flexDirection:'row', gap:'1em'}}>
+      <div style={{display:"flex", justifyContent:'space-between', gap: "1rem"}}>
         <button onClick={() => router.push("/login")}>
           Book a Haircut
         </button>
