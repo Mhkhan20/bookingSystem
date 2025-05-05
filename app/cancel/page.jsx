@@ -41,7 +41,8 @@ export default function CancelBookingPage() {
           user_email: email,
           name: booking.userName || "No name provided",  
           slot: booking.time,
-          service: booking.service
+          service: booking.service,
+          date: booking.date
         },
         "XRWZqqESFBPZAi8oB"
       )
