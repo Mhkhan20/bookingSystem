@@ -2,30 +2,45 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "../../lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, provider } from "../../lib/firebase";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const router = useRouter();
 
   const handleRegister = async () => {
+    if (!email || !password) { 
+      alert("Please enter all credentials")
+      return;
+    }
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Registered as:", result.user.email);
+      await createUserWithEmailAndPassword(auth, email, password);
       router.push("/booking");
     } catch (error) {
-      console.error("Registration error:", error);
-      setMessage("Registration failed. Email might already be in use.");
+      alert("Registration error:", error);
     }
   };
 
-  return (
-    <div className="container">
-      <h1>Register</h1>
 
+  const handleGoogleSignUp = async  () => { 
+    try  {
+      await signInWithPopup(auth, provider);
+      router.push('/booking');
+    } catch(error)  {
+      alert("Sign up error", error);
+    }
+  };
+
+  
+
+  return (
+    <div className="registerContainer">
+
+          
+      <div className="registerCard"> 
+      <h1>Sign up</h1>
       <input
         type="email"
         placeholder="Email"
@@ -41,9 +56,23 @@ export default function RegisterPage() {
         className="input"
       />
 
-      <button onClick={handleRegister}>Register</button>
+      <button className="emailLogin" onClick={handleRegister}>Sign up</button>
+      
+      <div style={{display:"flex", gap:".25rem"}}> 
+        <p>Already have an account?</p> <p style={{textDecoration:'underline', cursor:'pointer'}} onClick={() => router.push('./login')}>Login</p>
+      </div>
 
-      {message && <p style={{ color: "lightgreen" }}>{message}</p>}
+      <div className="divider">
+            <span>or</span>
+        </div>
+
+        <button onClick={handleGoogleSignUp} className="emailLogin" style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: 'center' }}>
+            <img src="https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png" alt="Google" width="20" height="20" />
+            Sign up with Google
+          </button>
+      
+
+      </div>
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth, db } from "../../lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import emailjs from "emailjs-com";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function ConfirmPage() {
   const searchParams = useSearchParams();
@@ -17,6 +18,20 @@ export default function ConfirmPage() {
   const price = searchParams.get("price");
 
   const [message, setMessage] = useState("");
+
+  const [userChecked, setUserChecked] = useState(false);
+
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        if (!currentUser) {
+          router.push("/login");
+        } else {
+          setUserChecked(true);
+        }
+      });
+      return () => unsubscribe();
+      }, []);
+
 
   const handleConfirm = async () => {
     try {
@@ -68,6 +83,9 @@ export default function ConfirmPage() {
     }
   };
 
+  if (!userChecked) {
+    return null;  
+  }
   return (
     <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">
       <h1 className="text-2xl font-bold mb-4">Confirm Your Booking</h1>

@@ -1,7 +1,11 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
+
 
 export default function ServicePage() {
   const searchParams = useSearchParams();
@@ -9,6 +13,19 @@ export default function ServicePage() {
 
   const date = searchParams.get("date");
   const slot = searchParams.get("slot");
+
+  const [userChecked, setUserChecked] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push("/login");
+      } else {
+        setUserChecked(true);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const [name, setName] = useState("");
   const [service, setService] = useState("");
@@ -33,6 +50,11 @@ export default function ServicePage() {
       )}`
     );
   };
+
+  if (!userChecked) {
+    return null; 
+  }
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">

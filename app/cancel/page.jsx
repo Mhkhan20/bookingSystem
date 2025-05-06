@@ -7,11 +7,11 @@ import emailjs from "emailjs-com";
 
 export default function CancelBookingPage() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+
 
   const handleCancel = async () => {
     if (!email) {
-      setMessage("Please enter your email.");
+      alert("Please enter your email.");
       return;
     }
 
@@ -20,7 +20,7 @@ export default function CancelBookingPage() {
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      setMessage("No booking found for this email.");
+      alert("No booking found for this email."); ///
       return;
     }
 
@@ -30,7 +30,7 @@ export default function CancelBookingPage() {
 
     await deleteDoc(doc(db, "bookings", bookingId));
 
-    setMessage("Your booking has been cancelled.");
+    alert("Your booking has been cancelled.");///
 
     // ✅ Send cancellation email to both customer and admin
     emailjs
@@ -55,25 +55,23 @@ export default function CancelBookingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">
-      <h1 className="text-2xl font-bold mb-4">Cancel Your Booking</h1>
+    <div className="container">
+      <h1>Cancel Your Booking</h1>
 
       <input
         type="email"
         placeholder="Enter your booking email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border rounded p-2 text-black bg-white"
+        className="input"
       />
 
       <button
         onClick={handleCancel}
-        className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
       >
         Cancel Booking
       </button>
 
-      {message && <p className="mt-4 text-green-400">{message}</p>}
     </div>
   );
 }

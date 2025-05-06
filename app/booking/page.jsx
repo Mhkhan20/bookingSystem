@@ -3,27 +3,37 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { db, auth } from "../../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+
 
 export default function BookingPage() {
   const [availability, setAvailability] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null); 
   const [selectedSlot, setSelectedSlot] = useState("");
   const router = useRouter();
 
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        router.push("/login");
-      })
-      .catch((error) => {
-        console.error("Sign out error:", error);
-      });
-  };
+  const [userChecked, setUserChecked] = useState(false);
 
-  // Fetch availability and bookings
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push("/login");
+      } else {
+        setUserChecked(true);  
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+
+
+  // Fetch availability and bookings from Firestore
   useEffect(() => {
     const fetchData = async () => {
       const availabilitySnapshot = await getDocs(collection(db, "availability"));
@@ -38,46 +48,83 @@ export default function BookingPage() {
     fetchData();
   }, []);
 
-  // Filter out already booked slots for the selected date
+  // Convert availability dates into JS Date objects
+  const availableDates = availability.map(item => {
+    const [year, month, day] = item.date.split('-');
+    return new Date(year, month - 1, day); // month is zero-based
+  });
+
+  // Helper to check if a date should be enabled
+  const isDateAvailable = (date) => {
+    return availableDates.some(
+      (d) =>
+        d.getFullYear() === date.getFullYear() &&
+        d.getMonth() === date.getMonth() &&
+        d.getDate() === date.getDate()
+    );
+  };
+
+  // Get selected date as string (yyyy-mm-dd) for comparison
+  const selectedDateString = selectedDate
+    ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+    : "";
+
+  // Get available slots for the selected date
   const selectedDaySlots =
     availability
-      .find(item => item.date === selectedDate)?.slots
+      .find(item => item.date === selectedDateString)?.slots
       .filter(slot =>
-        !bookings.some(booking => booking.date === selectedDate && booking.time === slot)
+        !bookings.some(booking => booking.date === selectedDateString && booking.time === slot)
       ) || [];
 
   const handleNext = () => {
     if (!selectedDate || !selectedSlot) return;
-    router.push(`/service?date=${selectedDate}&slot=${selectedSlot}`);
+    router.push(`/service?date=${selectedDateString}&slot=${selectedSlot}`);
   };
 
+  if (!userChecked) {
+    return null; // Or a loading spinner if you want
+}
+
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">
-      <h1 className="text-2xl font-bold mb-4">Book Your Haircut</h1>
+    <div className="bookingContainer">
+      <h1>Book Your Haircut</h1>
 
-      {/* Date Selection */}
-      <label className="font-semibold">Select a Date:</label>
-      <select
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-        className="border rounded p-2 text-black bg-white"
-      >
-        <option value="">-- Choose a date --</option>
-        {availability.map((item, index) => (
-          <option key={index} value={item.date}>
-            {item.date}
-          </option>
-        ))}
-      </select>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <StaticDatePicker
+          displayStaticWrapperAs="desktop"
+          value={selectedDate}
+          onChange={(date) => {
+            setSelectedDate(date);
+            setSelectedSlot("");  // Reset the time slot when date changes
+        }}
+          shouldDisableDate={(date) => !isDateAvailable(date)}
+          slotProps={{
+            textField: {
+              variant: "outlined",
+              sx: { bgcolor: "white", borderRadius: "px", display: "none" } // Hide the "cancel ok" (input box)
+            }
+          }}
+        />
+      </LocalizationProvider>
 
-      {/* Time Slot Selection */}
-      {selectedDate && (
-        <>
-          <label className="font-semibold">Select a Time Slot:</label>
-          <select
+     
+     <div style={{display:'flex', flexDirection:'row', gap:".75em"}}> 
+     <select
             value={selectedSlot}
             onChange={(e) => setSelectedSlot(e.target.value)}
             className="border rounded p-2 text-black bg-white"
+            disabled={!selectedDate || selectedDaySlots.length === 0}
+            style={{
+              padding: "0.75em 1em",
+              borderRadius: "10px",
+              border: "2px solid #f0ebd8",
+              backgroundColor: "#f0ebd8",
+              color: "#000",
+              fontSize: "1rem",
+              width: "250px", // or whatever size you want
+              cursor: "pointer"}}
           >
             <option value="">-- Choose a time slot --</option>
             {selectedDaySlots.length > 0 ? (
@@ -88,30 +135,26 @@ export default function BookingPage() {
               ))
             ) : (
               <option value="" disabled>
-                No available slots for this date
+                Please select a Date
               </option>
             )}
           </select>
-        </>
-      )}
 
-      {/* Next Button */}
-      {selectedDate && selectedSlot && (
+    
+      
         <button
           onClick={handleNext}
+          disabled = {!selectedDate || !selectedSlot}
           className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
+          style={{
+            backgroundColor:
+            selectedDate && selectedSlot ? "#f0ebd8" : "#aaa",
+          }}
         >
           Next
         </button>
-      )}
-
-      {/* Sign Out Button */}
-      <button
-        onClick={handleSignOut}
-        className="mt-4 px-3 py-2 bg-red-600 text-white rounded"
-      >
-        Sign Out
-      </button>
+     </div>
+          
     </div>
   );
 }
