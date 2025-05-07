@@ -29,9 +29,9 @@ export default function Header() {
     return (
         <header className="appHeader">
             <div className="leftContent">
-                <img onClick={() => router.push('/welcome')} src="/logo.png" alt="Logo" />
+                <img style={{cursor:'pointer'}} onClick={() => router.push('/welcome')} src="/logo.png" alt="Logo" />
             </div>
-
+        
             {/* Show Sign Out only when user logged in AND not on welcome/entry pages */}
             {user && !shouldHideSignOut && (
                 <button

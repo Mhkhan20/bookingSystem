@@ -2,10 +2,16 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { auth } from "../../lib/firebase";
+import { auth } from "../../lib/firebase"; 
 import { onAuthStateChanged } from "firebase/auth";
+import BackButton from "../components/BackButton";
 
 
+const servicesData = [
+  { name: "Haircut", price: 18.5, description: "Classic haircut to your style." },
+  { name: "Beard", price: 10, description: "Beard trimming and shaping." },
+  { name: "Haircut and Beard", price: 23, description: "Haircut and beard combo." },
+];
 
 export default function ServicePage() {
   const searchParams = useSearchParams();
@@ -15,6 +21,10 @@ export default function ServicePage() {
   const slot = searchParams.get("slot");
 
   const [userChecked, setUserChecked] = useState(false);
+  const [bookingName, setBookingName] = useState("");
+  const [selectedServiceName, setSelectedServiceName] = useState(""); 
+  const [selectedServicePrice, setSelectedServicePrice] = useState(0); 
+  const [detailedViewService, setDetailedViewService] = useState(null); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -25,28 +35,28 @@ export default function ServicePage() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
-  const [name, setName] = useState("");
-  const [service, setService] = useState("");
-  const [price, setPrice] = useState(0);
+  const handleCardToggleDetails = (service) => {
+    if (selectedServiceName === service.name && detailedViewService === service.name) {
+      setDetailedViewService(null);
+    } else {
+      
+      setSelectedServiceName(service.name);
+      setSelectedServicePrice(service.price);
+      setDetailedViewService(service.name); 
+    }
+  };
 
-  const handleServiceChange = (e) => {
-    const selectedService = e.target.value;
-    setService(selectedService);
-
-    // Set prices
-    if (selectedService === "Haircut") setPrice(18.5);
-    else if (selectedService === "Beard") setPrice(10);
-    else if (selectedService === "Both") setPrice(23);
-    else setPrice(0);
+  const handleConfirmSelectionAndCollapse = (serviceName) => {
+    setDetailedViewService(null);
   };
 
   const handleNext = () => {
-    if (!service || !name) return; // ✅ Don't allow next without name and service
+    if (!selectedServiceName || !bookingName) return; 
     router.push(
-      `/confirm?date=${date}&slot=${slot}&service=${service}&price=${price}&name=${encodeURIComponent(
-        name
+      `/confirm?date=${date}&slot=${slot}&service=${selectedServiceName}&price=${selectedServicePrice}&name=${encodeURIComponent(
+        bookingName
       )}`
     );
   };
@@ -54,62 +64,69 @@ export default function ServicePage() {
   if (!userChecked) {
     return null; 
   }
-  
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">
-      <h1 className="text-2xl font-bold mb-4">Select Your Service</h1>
+    
+    <div className="serviceContainer">
+      <BackButton />
+      <h1>Select Your Service</h1>
+      <div style={{display: 'flex', justifyContent:'center', alignItems:'center', gap: "2rem"}}>
+      {date && <p><strong>Date:</strong> {date}</p>}
+      {slot && <p><strong>Time Slot:</strong> {slot}</p>}
+      </div>
+     
 
-      <p>
-        <strong>Date:</strong> {date}
-      </p>
-      <p>
-        <strong>Time Slot:</strong> {slot}
-      </p>
+      <div className="cardsContainer">
+        {servicesData.map((serviceItem) => (
+          <div
+            key={serviceItem.name}
+            className={`
+              serviceCard
+              ${selectedServiceName === serviceItem.name ? "selected" : ""}
+              ${detailedViewService === serviceItem.name && selectedServiceName === serviceItem.name ? "expanded" : ""}
+            `}
+            onClick={() => handleCardToggleDetails(serviceItem)}
+          >
+            <h3>{serviceItem.name}</h3>
+            {detailedViewService === serviceItem.name && selectedServiceName === serviceItem.name && (
+              <div className="serviceCardDetails">
+                <p>Price: ${serviceItem.price.toFixed(2)}</p>
+                <p>{serviceItem.description}</p>
+                <button
+                  className="confirmDetailsButton"
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    handleConfirmSelectionAndCollapse(serviceItem.name);
+                  }}
+                >
+                  Select
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-      {/* Service Selection */}
-      <label className="font-semibold">Choose a Service:</label>
-      <select
-        value={service}
-        onChange={handleServiceChange}
-        className="border rounded p-2 text-black bg-white"
-      >
-        <option value="">-- Choose a service --</option>
-        <option value="Haircut">Haircut ($18.50)</option>
-        <option value="Beard">Beard ($10)</option>
-        <option value="Both">Haircut + Beard ($23)</option>
-      </select>
+      <div style={{display:"flex", gap:'0.8rem', justifyContent:'center', marginTop:'20px'}}> 
+          <input
+            type="text"
+            value={bookingName}
+            onChange={(e) => setBookingName(e.target.value)}
+            placeholder="Enter your name"
+            className="nameInput"
+          />
 
-      {/* Name Input */}
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Enter your name"
-        className="border rounded p-2 w-80"
-        required
-      />
-
-      {/* Price and Next Button */}
-      {service && (
-        <>
-          <p className="mt-2">Total Price: ${price}</p>
           <button
             onClick={handleNext}
-            className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
+            disabled={!selectedServiceName || !bookingName}
+            className="nextButton"
           >
             Next
           </button>
-        </>
-      )}
 
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="px-3 py-1 bg-gray-500 text-white rounded"
-      >
-        Back
-      </button>
+          {/* need to add back button  */}
+      </div>
+      
     </div>
   );
 }

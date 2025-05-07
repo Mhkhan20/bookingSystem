@@ -114,17 +114,8 @@ export default function BookingPage() {
      <select
             value={selectedSlot}
             onChange={(e) => setSelectedSlot(e.target.value)}
-            className="border rounded p-2 text-black bg-white"
+            className="dropDownLabel"
             disabled={!selectedDate || selectedDaySlots.length === 0}
-            style={{
-              padding: "0.75em 1em",
-              borderRadius: "10px",
-              border: "2px solid #f0ebd8",
-              backgroundColor: "#f0ebd8",
-              color: "#000",
-              fontSize: "1rem",
-              width: "250px", // or whatever size you want
-              cursor: "pointer"}}
           >
             <option value="">-- Choose a time slot --</option>
             {selectedDaySlots.length > 0 ? (
@@ -145,10 +136,10 @@ export default function BookingPage() {
         <button
           onClick={handleNext}
           disabled = {!selectedDate || !selectedSlot}
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
           style={{
             backgroundColor:
             selectedDate && selectedSlot ? "#f0ebd8" : "#aaa",
+            transition:' background-color 0.3s ease, transform 0.2s ease'
           }}
         >
           Next

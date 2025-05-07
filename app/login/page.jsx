@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { auth, provider } from "../../lib/firebase";
 import { signInWithPopup, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const router = useRouter();
 
   // Google login
@@ -19,7 +19,7 @@ export default function LoginPage() {
       router.push("/booking");
     } catch (error) {
       console.error("Google login error:", error);
-      setMessage("Google login failed.");
+
     }
   };
 
@@ -31,7 +31,6 @@ export default function LoginPage() {
       router.push("/booking");
     } catch (error) {
       console.error("Email login error:", error);
-      setMessage("Email login failed. Check your credentials.");
     }
   };
 
@@ -52,6 +51,11 @@ export default function LoginPage() {
 
   return (
     <div className="container">
+       <img
+        onClick={() => router.push('/entry')}
+        src='/backArr.png'
+        className='backArrowBtn'
+    ></img>
 
       <div className="loginCard">
         
@@ -77,7 +81,16 @@ export default function LoginPage() {
         </p>
 
 
-        <button className="emailLogin" onClick={handleEmailLogin}>Login</button>
+        <button 
+        className="emailLogin" 
+        onClick={handleEmailLogin}
+        disabled = {!email || !password}
+        style={{backgroundColor:
+          email && password ? "#000" : "#aaa",
+          transition:' background-color 0.3s ease, transform 0.2s ease'}}
+        >Login
+        </button>
+
         <div className="divider">
             <span>or</span>
         </div>

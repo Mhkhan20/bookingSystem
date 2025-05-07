@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { db } from "../../lib/firebase";
+import BackButton from "../components/BackButton";
 import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import emailjs from "emailjs-com";
 
 export default function CancelBookingPage() {
   const [email, setEmail] = useState("");
-
+  const [message, setMessage] = useState("");
 
   const handleCancel = async () => {
+    setMessage(""); // clear any previous message
+
     if (!email) {
-      alert("Please enter your email.");
+      setMessage("Please enter your email.");
       return;
     }
 
@@ -20,26 +23,25 @@ export default function CancelBookingPage() {
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      alert("No booking found for this email."); ///
+      setMessage("No bookings found with this email.");
       return;
     }
 
-    const bookingDoc = snapshot.docs[0]; // In case there are multiple, take the first one.
+    const bookingDoc = snapshot.docs[0]; 
     const booking = bookingDoc.data();
     const bookingId = bookingDoc.id;
 
     await deleteDoc(doc(db, "bookings", bookingId));
 
-    alert("Your booking has been cancelled.");///
+    setMessage("Your booking has been cancelled successfully. A confirmation email has been sent.");
 
-    // ✅ Send cancellation email to both customer and admin
     emailjs
       .send(
         "service_6l1whcf",
         "template_4x9qzhp",
         {
           user_email: email,
-          name: booking.userName || "No name provided",  
+          name: booking.userName || "No name provided",
           slot: booking.time,
           service: booking.service,
           date: booking.date
@@ -56,22 +58,29 @@ export default function CancelBookingPage() {
 
   return (
     <div className="container">
-      <h1>Cancel Your Booking</h1>
+      <BackButton />
+      <div className='loginCard'>
+        <h1>Cancel Your Booking</h1>
 
-      <input
-        type="email"
-        placeholder="Enter your booking email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="input"
-      />
+        <input
+          type="email"
+          placeholder="Enter your booking email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="input"
+        />
 
-      <button
-        onClick={handleCancel}
-      >
-        Cancel Booking
-      </button>
+        <button className="emailLogin" onClick={handleCancel}>
+          Cancel Booking
+        </button>
 
+        {message && (
+          <p style={{ marginTop: "1em", color: "#000", textAlign: "center" }}>
+            {message}
+          </p>
+        )}
+
+      </div>
     </div>
   );
 }

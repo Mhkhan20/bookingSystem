@@ -56,7 +56,12 @@ export default function RegisterPage() {
         className="input"
       />
 
-      <button className="emailLogin" onClick={handleRegister}>Sign up</button>
+      <button className="emailLogin" onClick={handleRegister}
+      disabled = {!email || !password}
+      style={{backgroundColor:
+        email && password ? "#000" : "#aaa",
+        transition:' background-color 0.3s ease, transform 0.2s ease'}}
+      >Sign up</button>
       
       <div style={{display:"flex", gap:".25rem"}}> 
         <p>Already have an account?</p> <p style={{textDecoration:'underline', cursor:'pointer'}} onClick={() => router.push('./login')}>Login</p>

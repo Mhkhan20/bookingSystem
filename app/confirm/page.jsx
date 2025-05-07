@@ -6,6 +6,7 @@ import { auth, db } from "../../lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import emailjs from "emailjs-com";
 import { onAuthStateChanged } from "firebase/auth";
+import BackButton from "../components/BackButton";
 
 export default function ConfirmPage() {
   const searchParams = useSearchParams();
@@ -18,31 +19,26 @@ export default function ConfirmPage() {
   const price = searchParams.get("price");
 
   const [message, setMessage] = useState("");
-
   const [userChecked, setUserChecked] = useState(false);
 
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        if (!currentUser) {
-          router.push("/login");
-        } else {
-          setUserChecked(true);
-        }
-      });
-      return () => unsubscribe();
-      }, []);
+  const fullAddress = "647 Kitchen Street Fredericton NB";
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push("/login");
+      } else {
+        setUserChecked(true);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleConfirm = async () => {
     try {
       const user = auth.currentUser;
 
-      if (!user) {
-        setMessage("Please log in before booking.");
-        return;
-      }
-
-      // ✅ Step 1: Save booking to Firestore
       await addDoc(collection(db, "bookings"), {
         userName: name,
         userEmail: user.email,
@@ -50,68 +46,84 @@ export default function ConfirmPage() {
         time: slot,
         service: service,
         price: Number(price),
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
 
-      // ✅ Step 2: Send a single email to both customer and admin
       emailjs
         .send(
           "service_6l1whcf",
-          "template_adminID",   // Your single template for booking confirmation
+          "template_adminID",
           {
             name: name,
             date: date,
             slot: slot,
             service: service,
             price: price,
-            user_email: user.email    // ✅ Send user email as variable
+            user_email: user.email,
           },
           "XRWZqqESFBPZAi8oB"
         )
         .then(() => {
-          console.log("Booking confirmation email sent to customer and admin.");
           setMessage("Booking confirmed! Confirmation email sent.");
         })
-        .catch((error) => {
-          console.error("EmailJS email error:", error);
-          setMessage("Booking confirmed, but failed to send email.");
+        .catch(() => {
+          setMessage(
+            "Booking confirmed, but failed to send email. Please contact me @ 506-230-9440"
+          );
         });
 
     } catch (error) {
       console.error("Error confirming booking:", error);
-      setMessage("There was a problem confirming your booking. Please try again.");
+      setMessage(
+        "There was a problem confirming your booking. Please try again."
+      );
     }
   };
 
   if (!userChecked) {
-    return null;  
+    return null;
   }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4 text-white">
-      <h1 className="text-2xl font-bold mb-4">Confirm Your Booking</h1>
+    
+    <div className="confirmContainer"> 
+     <BackButton />
+      
+      <div className="confirmCard">
+    
+    
 
-      <p><strong>Date:</strong> {date}</p>
-      <p><strong>Time Slot:</strong> {slot}</p>
-      <p><strong>Service:</strong> {service}</p>
-      <p><strong>Price:</strong> ${price}</p>
+    <h1>Confirm Your Booking</h1>
 
-      <button
-        onClick={handleConfirm}
-        className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
+    <p><strong>Date:</strong> {date}</p>
+    <p><strong>Time:</strong> {slot}</p>
+    <p><strong>Service:</strong> {service}</p>
+    <p><strong>Price:</strong> ${price}</p>
+    <p><strong>Name:</strong> {name}</p>
+    <p>
+    <strong>Location:</strong> {fullAddress}{" "}
+      <a
+        href={mapUrl}
+        style={{ color: "#000", textDecoration: "underline", marginLeft: "5px" }}
       >
-        Confirm Booking
-      </button>
+      View on Map
+      </a>
+    </p>
 
-      {message && (
-        <p className="mt-4 text-green-400 text-center">{message}</p>
-      )}
-
-      <button
-        onClick={() => router.back()}
-        className="px-3 py-1 bg-gray-500 text-white rounded"
-      >
-        Back
-      </button>
+    <div style={{display:"flex", justifyContent:'center', alignItems:'center', width: '100%'}}> 
+    <button  style ={{padding:'.7em 3em', color:"#f0ebd8", backgroundColor:'black', borderRadius:'6px', transition: 'background-color 0.3s ease, color 0.3s ease'}} 
+    onClick={handleConfirm}>
+      Confirm Booking
+    </button>
     </div>
+    
+
+    {message && (
+      <p>{message}</p>
+    )}
+  </div>
+    </div>
+
+   
   );
 }
