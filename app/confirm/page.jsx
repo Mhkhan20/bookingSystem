@@ -3,10 +3,11 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import emailjs from "emailjs-com";
 import { onAuthStateChanged } from "firebase/auth";
 import BackButton from "../components/BackButton";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function ConfirmPage() {
   const searchParams = useSearchParams();
@@ -20,6 +21,9 @@ export default function ConfirmPage() {
 
   const [message, setMessage] = useState("");
   const [userChecked, setUserChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [hasExistingBooking, setHasExistingBooking] = useState(false);
 
   const fullAddress = "647 Kitchen Street Fredericton NB";
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
@@ -30,13 +34,29 @@ export default function ConfirmPage() {
         router.push("/login");
       } else {
         setUserChecked(true);
+  
+      
+        (async () => {
+          const bookingsRef = collection(db, "bookings");
+          const q = query(bookingsRef, where("userEmail", "==", currentUser.email));
+          const snapshot = await getDocs(q);
+  
+          if (!snapshot.empty) {
+            setHasExistingBooking(true);
+            setMessage("You already have an active booking. Please cancel it to make a new one.");
+          }
+        })();
       }
     });
+  
     return () => unsubscribe();
   }, []);
+  
+
 
   const handleConfirm = async () => {
     try {
+      setLoading(true);
       const user = auth.currentUser;
 
       await addDoc(collection(db, "bookings"), {
@@ -65,11 +85,13 @@ export default function ConfirmPage() {
         )
         .then(() => {
           setMessage("Booking confirmed! Confirmation email sent.");
+          setLoading(false);
+          setConfirmed(true);
         })
         .catch(() => {
-          setMessage(
-            "Booking confirmed, but failed to send email. Please contact me @ 506-230-9440"
-          );
+          setMessage("Booking confirmed, but failed to send email. Please contact me @ 506-230-9440");
+          setLoading(false);
+          setConfirmed(true);
         });
 
     } catch (error) {
@@ -77,6 +99,7 @@ export default function ConfirmPage() {
       setMessage(
         "There was a problem confirming your booking. Please try again."
       );
+      setLoading(false);
     }
   };
 
@@ -110,14 +133,30 @@ export default function ConfirmPage() {
       </a>
     </p>
 
-    <div style={{display:"flex", justifyContent:'center', alignItems:'center', width: '100%'}}> 
-    <button  style ={{padding:'.7em 3em', color:"#f0ebd8", backgroundColor:'black', borderRadius:'6px', transition: 'background-color 0.3s ease, color 0.3s ease'}} 
-    onClick={handleConfirm}>
+    {loading ? (
+  <div className="loadingProgress"> 
+    <CircularProgress style={{ color: '#000' }} />
+  </div>
+) : !confirmed ? (
+  <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+    {!hasExistingBooking && ( 
+      <button
+      style={{
+        padding: '.7em 3em',
+        color: "#f0ebd8",
+        backgroundColor: 'black',
+        borderRadius: '6px',
+        transition: 'background-color 0.3s ease, color 0.3s ease'
+      }}
+      onClick={handleConfirm}
+    >
       Confirm Booking
     </button>
-    </div>
+    )}
     
-
+  </div>
+) : null}
+    
     {message && (
       <p>{message}</p>
     )}

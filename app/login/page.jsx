@@ -4,16 +4,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "../../lib/firebase";
 import { signInWithPopup, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   // Google login
   const handleGoogleLogin = async () => {
     try {
+      setLoading(true);
       const result = await signInWithPopup(auth, provider);
       console.log("Logged in as:", result.user.email);
       router.push("/booking");
@@ -26,6 +30,7 @@ export default function LoginPage() {
   // Email/password login
   const handleEmailLogin = async () => {
     try {
+      setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
       console.log("Logged in as:", result.user.email);
       router.push("/booking");
@@ -81,6 +86,8 @@ export default function LoginPage() {
         </p>
 
 
+      {!loading ? ( 
+        <> 
         <button 
         className="emailLogin" 
         onClick={handleEmailLogin}
@@ -99,9 +106,16 @@ export default function LoginPage() {
             <img src="https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png" alt="Google" width="20" height="20" />
             Continue with Google
           </button>
+        </>
+      ) : ( 
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
+            <CircularProgress style={{ color: "#000" }} />
+        </div>
+       )}
+        
       </div>
 
-      <div style={{display:"flex", flexDirection:'row', gap:".25rem"}}> 
+      <div className="loadingProgress"> 
           <p>New user? </p> 
           <p style={{textDecoration:'underline', cursor:'pointer'}}
           onClick={() => router.push('./register')}

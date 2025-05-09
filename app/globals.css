@@ -316,6 +316,12 @@ input {
   margin-right: 25px;
 }
 
+.loadingProgress { 
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
 /* --------------------------------------------- */
 /*                  DIVIDERS                     */
 /* --------------------------------------------- */
