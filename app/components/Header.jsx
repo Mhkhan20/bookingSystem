@@ -6,6 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Header() {
     const [user, setUser] = useState(null);
+    const adminEmail = 'q23da@unb.ca'
     const router = useRouter();
     const pathname = usePathname();   // To check current page
 
@@ -25,14 +26,15 @@ export default function Header() {
     // Define which pages should HIDE the sign out button
     const hideOnPages = ["/welcome", "/entry", "/login", "/register"];
     const shouldHideSignOut = hideOnPages.includes(pathname);
-
+    const isAdmin = user?.email === adminEmail;
     return (
         <header className="appHeader">
             <div className="leftContent">
                 <img style={{cursor:'pointer'}} onClick={() => router.push('/welcome')} src="/logo.png" alt="Logo" />
             </div>
-        
-            {/* Show Sign Out only when user logged in AND not on welcome/entry pages */}
+
+            <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:'1rem'}}> 
+                 {/* Show Sign Out only when user logged in AND not on welcome/entry pages */}
             {user && !shouldHideSignOut && (
                 <button
                     onClick={handleSignOut}
@@ -41,6 +43,14 @@ export default function Header() {
                     Sign Out
                 </button>
             )}
+
+            {isAdmin && ( 
+                <button className="signoutButton" onClick={() => router.push('/admin')}> 
+                    Admin 
+                </button>
+            )}
+            </div>
+           
         </header>
     );
 }

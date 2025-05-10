@@ -142,6 +142,14 @@ input {
   gap: 1em;
   height: 100vh;
 }
+.adminContainer { 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2em;
+  height: 100vh;
+}
 .aboutContainer { 
   display: flex;
   flex-direction: column;
@@ -331,6 +339,18 @@ input {
   align-items: center;
   justify-content: center;
   margin-right: 25px;
+}
+
+.adminSettingsBtn { 
+   width: 18vw;
+  background-color: #0a0a0a;
+  border-radius: 10px;
+  color: #f0ebd8;
+  height: 3vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
 }
 
 .loadingProgress { 
