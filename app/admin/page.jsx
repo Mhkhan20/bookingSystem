@@ -28,7 +28,7 @@ export default function AdminPage() {
   };
 
   return (
-      <div className="flex flex-col items-center justify-center h-screen space-y-4 bg-white text-black">
+      <div className="container">
           <h1 className="text-2xl font-bold">Admin - Set Availability</h1>
       <form onSubmit={handleSubmit} className="space-y-2">
         <input
