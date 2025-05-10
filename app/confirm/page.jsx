@@ -71,8 +71,8 @@ export default function ConfirmPage() {
 
       emailjs
         .send(
-          "service_6l1whcf",
-          "template_adminID",
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_CONFIRM_ID,
           {
             name: name,
             date: date,
@@ -81,7 +81,7 @@ export default function ConfirmPage() {
             price: price,
             user_email: user.email,
           },
-          "XRWZqqESFBPZAi8oB"
+          process.env.NEXT_PUBLIC_EMAILJS_USER_ID
         )
         .then(() => {
           setMessage("Booking confirmed! Confirmation email sent.");

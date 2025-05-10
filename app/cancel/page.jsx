@@ -11,7 +11,7 @@ export default function CancelBookingPage() {
   const [message, setMessage] = useState("");
 
   const handleCancel = async () => {
-    setMessage(""); // clear any previous message
+    setMessage(""); 
 
     if (!email) {
       setMessage("Please enter your email.");
@@ -37,8 +37,8 @@ export default function CancelBookingPage() {
 
     emailjs
       .send(
-        "service_6l1whcf",
-        "template_4x9qzhp",
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_CANCEL_ID,
         {
           user_email: email,
           name: booking.userName || "No name provided",
@@ -46,7 +46,7 @@ export default function CancelBookingPage() {
           service: booking.service,
           date: booking.date
         },
-        "XRWZqqESFBPZAi8oB"
+        process.env.NEXT_PUBLIC_EMAILJS_USER_ID
       )
       .then(() => {
         console.log("Cancellation email sent to customer and admin.");
