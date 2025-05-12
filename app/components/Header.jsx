@@ -43,7 +43,6 @@ export default function Header() {
                     Sign Out
                 </button>
             )}
-
             {isAdmin && ( 
                 <button className="signoutButton" onClick={() => router.push('/admin')}> 
                     Admin 

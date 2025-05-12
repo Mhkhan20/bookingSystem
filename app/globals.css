@@ -402,18 +402,20 @@ input {
 .MuiPickersDay-root.Mui-selected {
   background-color: #f0ebd8 !important;
   color: black !important;
-  border: 1px solid #615b5b !important;
+  border: 1.5px solid #615b5b !important;
 }
 
 .MuiPickersDay-today {
-  border: 2px solid #f0ebd8 !important;
-  color: #000 !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
 }
 
-.MuiPickersDay-disabled {
-  color: #a9a8a87e !important;
-  text-decoration: line-through;
+.MuiPickersDay-root.Mui-disabled:not(.MuiPickersDay-today) {
+  color: #5e515167 !important;
+  
 }
+
+
 
 .MuiPickersDay-root {
   font-size: 1.2rem !important;

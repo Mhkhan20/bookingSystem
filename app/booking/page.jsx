@@ -54,17 +54,22 @@ export default function BookingPage() {
     return new Date(year, month - 1, day); // month is zero-based
   });
 
-  // Helper to check if a date should be enabled
-  const isDateAvailable = (date) => {
-    return availableDates.some(
-      (d) =>
-        d.getFullYear() === date.getFullYear() &&
-        d.getMonth() === date.getMonth() &&
-        d.getDate() === date.getDate()
-    );
-  };
 
-  // Get selected date as string (yyyy-mm-dd) for comparison
+const isDateAvailable = (date) => {
+  const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+ 
+  const availabilityForDate = availability.find(item => item.date === dateString);
+  if (!availabilityForDate) return false;
+
+  
+  const unbookedSlots = availabilityForDate.slots.filter(slot =>
+    !bookings.some(booking => booking.date === dateString && booking.time === slot)
+  );
+
+  return unbookedSlots.length > 0;
+};
+
   const selectedDateString = selectedDate
     ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
     : "";
@@ -97,7 +102,7 @@ export default function BookingPage() {
           value={selectedDate}
           onChange={(date) => {
             setSelectedDate(date);
-            setSelectedSlot("");  // Reset the time slot when date changes
+            setSelectedSlot("");  
         }}
           shouldDisableDate={(date) => !isDateAvailable(date)}
           slotProps={{
