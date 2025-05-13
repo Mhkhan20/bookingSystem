@@ -11,7 +11,7 @@
 
 ## 📸 Preview
 
-![Trimly Homepage](![alt text](image-1.png))  
+![Trimly Homepage](image-1.png)  
 
 
 

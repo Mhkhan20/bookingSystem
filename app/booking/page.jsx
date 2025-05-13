@@ -8,7 +8,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import BackButton from "../components/BackButton";
+
 
 
 
@@ -34,7 +34,6 @@ export default function BookingPage() {
 
 
 
-  // Fetch availability and bookings from Firestore
   useEffect(() => {
     const fetchData = async () => {
       const availabilitySnapshot = await getDocs(collection(db, "availability"));
@@ -49,12 +48,7 @@ export default function BookingPage() {
     fetchData();
   }, []);
 
-  // Convert availability dates into JS Date objects
-  const availableDates = availability.map(item => {
-    const [year, month, day] = item.date.split('-');
-    return new Date(year, month - 1, day); // month is zero-based
-  });
-
+ 
 
 const isDateAvailable = (date) => {
   const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -100,8 +94,13 @@ const isDateAvailable = (date) => {
           src='/backArr.png'
           className='backArrowBtn'
        />
-       
+
+      
+
+      
       <h1>Book Your Haircut</h1>
+
+
 
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <StaticDatePicker

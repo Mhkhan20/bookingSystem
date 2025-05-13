@@ -38,16 +38,13 @@ export default function WelcomePage() {
   return (
     <div className="container" style={{ position: "relative", gap: "1.5rem" }}>
       <h1 className="typing-text">Trimly.</h1>
-
-     
-      {loadingAuth || navigating ? (
-        <CircularProgress style={{ color: "#f0ebd8" }} />
-      ) : (
        
         <button onClick={handleProceed} disabled={navigating}>
            Book Now 
         </button>
-      )}
+
+        
+
     </div>
   );
 }
