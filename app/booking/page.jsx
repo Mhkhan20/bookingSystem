@@ -8,6 +8,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import BackButton from "../components/BackButton";
 
 
 
@@ -94,6 +95,12 @@ const isDateAvailable = (date) => {
 
   return (
     <div className="bookingContainer">
+       <img
+          onClick={() => router.push('/welcome')}
+          src='/backArr.png'
+          className='backArrowBtn'
+       />
+       
       <h1>Book Your Haircut</h1>
 
       <LocalizationProvider dateAdapter={AdapterDateFns}>

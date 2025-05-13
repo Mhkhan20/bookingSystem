@@ -1,20 +1,19 @@
 # ✂️ Trimly – Your Personal Barber Booking System
 
-**Trimly** is a minimalist web-based platform that simplifies the way clients book haircuts and grooming services. Designed for barbers and independent stylists, Trimly lets users schedule appointments based on your real-time availability—no calls, no back-and-forth.
+**Trimly** is a minimalist web-based platform that simplifies the way clients book haircuts and grooming services.Trimly lets users schedule appointments based on your real-time availability—no calls, no back-and-forth.
 
 ## 🚀 Live Demo
 
-👉 [Visit Trimly](https://your-trimly-app.vercel.app)  
-_(Replace this link with your actual deployment URL)_
+👉 [Visit Trimly](https://booking-system-nu-beryl.vercel.app/welcome)  
+
 
 ---
 
 ## 📸 Preview
 
-![Trimly Homepage](https://your-link-to-screenshot.png)  
-_(Add a real screenshot or animated GIF here for visual impact)_
+![Trimly Homepage](![alt text](image-1.png))  
 
----
+
 
 ## 💡 Features
 
@@ -52,8 +51,8 @@ To run Trimly locally on your machine:
 
 ```bash
 # 1. Clone this repository
-git clone https://github.com/your-username/trimly.git
-cd trimly
+git clone https://github.com/your-username/bookingSystem.git
+cd bookingSystem
 
 # 2. Install dependencies
 npm install

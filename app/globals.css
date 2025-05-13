@@ -330,7 +330,7 @@ input {
 }
 
 .signoutButton {
-  width: 18vw;
+  width: 12vw;
   background-color: #0a0a0a;
   border-radius: 10px;
   color: #f0ebd8;
@@ -493,7 +493,17 @@ input {
     left: 2%;
     height:5%;
     width: 6%;
+  }        
+   .signoutButton {
+    width: 20vw;
+    background-color: #0a0a0a;
+    border-radius: 12px;
+    color: #f0ebd8;
+    height: 5vh;
+    margin-right: 8px;
   }
+
+
   
 }
 

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { db } from "../../lib/firebase";
-import BackButton from "../components/BackButton";
 import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import emailjs from "emailjs-com";
 
@@ -58,7 +57,6 @@ export default function CancelBookingPage() {
 
   return (
     <div className="container">
-      <BackButton />
       <div className='loginCard'>
         <h1>Cancel Your Booking</h1>
 

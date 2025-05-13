@@ -17,7 +17,7 @@ export default function AdminPage() {
   const router = useRouter();
   const adminEmail = "q23da@unb.ca"; // ✅ Your admin email
 
-  // 🔐 Auth check on load
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user?.email === adminEmail) {
