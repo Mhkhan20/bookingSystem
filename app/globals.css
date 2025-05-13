@@ -130,8 +130,6 @@ input {
 
 
 
-
-
 /* --------------------------------------------- */
 /*                 CONTAINERS                    */
 /* --------------------------------------------- */
@@ -465,9 +463,6 @@ input {
     height: 5%;
     width: 8%;
   }
-  
-
-  }
 
   .input {
     padding: .5em .75em;
@@ -488,7 +483,7 @@ input {
     margin: 0;
     font-size: 8vw;
   }
-
+}
 
 @media (min-width: 600px) and (max-width: 992px) {
 
