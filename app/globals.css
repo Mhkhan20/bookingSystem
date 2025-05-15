@@ -160,12 +160,16 @@ input {
   padding: 1em
   
 }
-.innerAboutContainer { 
+.innerAboutContainer {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   max-height: 80vh;
   margin-top: 4em;
+  width: 100%;
+  max-width: 800px;   /* limit width for readability */
+  margin-left: auto;
+  margin-right: auto; /* centers horizontally */
 }
 
 .registerContainer {

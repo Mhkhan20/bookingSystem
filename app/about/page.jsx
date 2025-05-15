@@ -10,7 +10,7 @@ export default function AboutPage() {
 
       <h2>Who I Am</h2>
       <p>
-        Hey! I’m a self-taught barber based in Fredericton, New Brunswick. What started as a hobby turned into a full-time service as I found a passion for the craft. Over time, I’ve built strong connections within the local community—especially among university students.
+        Hey! I’m a self-taught barber based in Fredericton, New Brunswick. <br/> What started as a hobby turned into a full-time service as I found a passion for the craft. <br/> Over time, I’ve built strong connections within the local community—especially among university students.
       </p>
 
        <h2>My Work</h2>
