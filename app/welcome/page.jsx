@@ -2,46 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { auth } from "../../lib/firebase"; 
+import { auth } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 export default function WelcomePage() {
   const router = useRouter();
-  const [user, setUser] = useState(null); 
-  const [navigating, setNavigating] = useState(false);
-
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); 
+      setUser(currentUser);
     });
-    
+
     return () => unsubscribe();
   }, []);
 
-
   const handleBookNow = () => {
-    setNavigating(true); 
     if (user) {
-      // User is logged in
       router.push("/booking");
     } else {
-      // User is not logged in
       router.push("/login");
     }
-     
   };
 
   return (
-    <div className="container" style={{ position: "relative", gap: "1.5rem" }}>
-      <h1 className="typing-text">Trimly.</h1>
-       
-        <button onClick={handleBookNow}>
-           Book Now 
-        </button>
-
-        
-
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <h1 className="text-9xl font-serif font-bold">Trimly.</h1>
+        <button onClick={handleBookNow}>Book Now</button>
+      </div>
     </div>
   );
 }
