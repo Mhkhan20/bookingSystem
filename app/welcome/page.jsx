@@ -28,8 +28,8 @@ export default function WelcomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-9xl font-serif font-bold">Trimly.</h1>
-        <button onClick={handleBookNow}>Book Now</button>
+        <h1 className="text-9xl text-zinc-100 font-serif font-bold">Trimly.</h1>
+        <button className="rounded-md bg-zinc-800 text-zinc-100 px-4 py-2 hover:bg-zinc-700 transition-colors" onClick={handleBookNow}>Book Now</button>
       </div>
     </div>
   );
