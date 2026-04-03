@@ -15,7 +15,7 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
 
   const router = useRouter();
-  const adminEmail = "q23da@unb.ca"; // ✅ Your admin email
+  const adminEmail = "q23da@unb.ca"; 
 
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function AdminPage() {
       if (user?.email === adminEmail) {
         setAuthorized(true);
       } else {
-        router.push("/login"); // ❌ Redirect if not admin
+        router.push("/login"); 
       }
       setChecking(false);
     });
@@ -31,7 +31,6 @@ export default function AdminPage() {
     return () => unsubscribe();
   }, []);
 
-  // ⏳ While checking auth
   if (checking) {
     return (
       <div style={{ textAlign: "center", marginTop: "3rem" }}>
@@ -40,7 +39,6 @@ export default function AdminPage() {
     );
   }
 
-  // ✅ If authorized, render form
   if (!authorized) return null;
 
   const handleSubmit = async (e) => {

@@ -2,29 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
 import { auth } from "../../lib/firebase"; 
 import { onAuthStateChanged } from "firebase/auth";
 
 export default function WelcomePage() {
   const router = useRouter();
   const [user, setUser] = useState(null); 
-  const [loadingAuth, setLoadingAuth] = useState(true); 
   const [navigating, setNavigating] = useState(false);
 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser); 
-      setLoadingAuth(false); 
     });
     
     return () => unsubscribe();
   }, []);
 
 
-  const handleProceed = () => {
-    setNavigating(true); // Show loading spinner
+  const handleBookNow = () => {
+    setNavigating(true); 
     if (user) {
       // User is logged in
       router.push("/booking");
@@ -39,7 +36,7 @@ export default function WelcomePage() {
     <div className="container" style={{ position: "relative", gap: "1.5rem" }}>
       <h1 className="typing-text">Trimly.</h1>
        
-        <button onClick={handleProceed} disabled={navigating}>
+        <button onClick={handleBookNow}>
            Book Now 
         </button>
 
