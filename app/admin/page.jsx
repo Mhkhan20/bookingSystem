@@ -15,7 +15,7 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
 
   const router = useRouter();
-  const adminEmail = "q23da@unb.ca"; // ✅ Your admin email
+  const adminEmail = "q23da@unb.ca"; // TESTING CODE
 
 
   useEffect(() => {
